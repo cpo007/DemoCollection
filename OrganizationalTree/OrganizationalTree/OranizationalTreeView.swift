@@ -45,19 +45,11 @@ class OranizationalTreeView: UIView {
         
     }
     
-    public func reloadData() -> CGFloat {
+    public func reloadData(method:((_ height: CGFloat) -> Void)) -> CGFloat {
         guard let node = source else { return 0 }
-        print(node.isSpread)
-        
-//        if node.isSpread {
-//
-//        } else {
-//
-//        }
-        
         var maxHeight: CGFloat = 0
         for (index,view) in nextTreeViews.enumerated(){
-            let height = view.reloadData()
+            let height = view.reloadData(method: method)
             view.frame.size = CGSize.init(width: nextView.frame.width, height: height)
             view.frame.origin = CGPoint.init(x: 0, y: node.isSpread ? maxHeight : 0)
             maxHeight+=(node.isSpread ? height : 0)
@@ -65,7 +57,8 @@ class OranizationalTreeView: UIView {
         nextView.frame.size = CGSize.init(width: nextView.frame.width, height: node.isSpread ? maxHeight : 0)
         
         maxHeight+=OranizationalTreeParameter.treeHeight
-
+        self.frame.size = CGSize.init(width: superview?.frame.width ?? 0, height: maxHeight)
+        method(maxHeight)
         return maxHeight
     }
     

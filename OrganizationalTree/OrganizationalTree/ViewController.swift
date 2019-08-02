@@ -41,8 +41,14 @@ class ViewController: UIViewController {
         
         view.addSubview(v1)
         treeView = v1
-        let height = treeView.reloadData()
-        treeView.frame.size = CGSize.init(width: OranizationalTreeParameter.treeWidth, height: height)
+        
+//        func getHeight(height: CGFloat){
+//            print(height)
+//        }
+        
+        
+        let height = treeView.reloadData(method: getHeight)
+//        treeView.frame.size = CGSize.init(width: OranizationalTreeParameter.treeWidth, height: height)
 
         registerNotification()
     }
@@ -51,11 +57,15 @@ class ViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(reloadTreeView), name: NSNotification.Name.shouldReload, object: nil)
         
     }
+    
+    func getHeight(height: CGFloat){
+        print(height)
+    }
 
     @objc private func reloadTreeView(){
         
-        let height = treeView.reloadData()
-        treeView.frame.size = CGSize.init(width: OranizationalTreeParameter.treeWidth, height: height)
+        let height = treeView.reloadData(method: getHeight)
+//        treeView.frame.size = CGSize.init(width: OranizationalTreeParameter.treeWidth, height: height)
 
         
 
