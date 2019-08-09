@@ -42,12 +42,13 @@
 //    // 3.添加子视图
     [self addSubview:self.contentView];
     [self.contentView addSubview:self.lineView];
-    [self.contentView addSubview:self.tableViewFirst];
-    [self.contentView addSubview:self.tableViewSecond];
-    [self.contentView addSubview:self.tableViewThird];
+    [self.contentView addSubview:self.pickerViewFirst];
+    [self.contentView addSubview:self.pickerViewSecond];
+    [self.contentView addSubview:self.secondUnit];
+    [self.contentView addSubview:self.pickerViewThird];
+    [self.contentView addSubview:self.thirdUnit];
     [self.contentView addSubview:self.selectedToplineView];
     [self.contentView addSubview:self.selctedBottomlineView];
-//    [self.contentView addSubview:self.pickerView];
     [self.contentView addSubview:self.buttonLeft];
     [self.contentView addSubview:self.buttonRight];
     [self.contentView addSubview:self.labelTitle];
@@ -92,7 +93,7 @@
     if (self.contentMode == STPickerContentModeBottom) {
         CGRect frameContent =  self.contentView.frame;
         if (self.isIphonePlus) {
-            frameContent.origin.y = EPScreenHeight - self.contentView.ep_height + 16;
+            frameContent.origin.y = EPScreenHeight - self.contentView.ep_height;
         }else {
             frameContent.origin.y = EPScreenHeight - self.contentView.ep_height;
         }
@@ -139,6 +140,54 @@
     }
 }
 
+#pragma mark - --- setters 属性 ---
+
+- (void)setTitle:(NSString *)title
+{
+    _title = title;
+    [self.labelTitle setText:title];
+}
+
+- (void)setFont:(UIFont *)font
+{
+    _font = font;
+    [self.buttonLeft.titleLabel setFont:font];
+    [self.buttonRight.titleLabel setFont:font];
+    [self.labelTitle setFont:font];
+}
+
+- (void)setTitleColor:(UIColor *)titleColor
+{
+    _titleColor = titleColor;
+    [self.labelTitle setTextColor:titleColor];
+    [self.buttonLeft setTitleColor:titleColor forState:UIControlStateNormal];
+    [self.buttonRight setTitleColor:titleColor forState:UIControlStateNormal];
+}
+
+- (void)setBorderButtonColor:(UIColor *)borderButtonColor
+{
+    _borderButtonColor = borderButtonColor;
+    [self.buttonLeft addBorderColor:borderButtonColor];
+    [self.buttonRight addBorderColor:borderButtonColor];
+}
+
+- (void)setHeightPicker:(CGFloat)heightPicker
+{
+    _heightPicker = heightPicker;
+    self.contentView.ep_height = heightPicker;
+}
+
+- (void)setContentMode:(STPickerContentMode)contentMode
+{
+    _contentMode = contentMode;
+    if (contentMode == STPickerContentModeCenter) {
+        self.contentView.ep_height = self.heightPicker + EPControlSystemHeight;
+    }else {
+        self.contentView.ep_height = self.heightPicker;
+    }
+}
+
+#pragma mark - --- getters 属性 ---
 - (UIView *)contentView{
     if (!_contentView) {
         CGFloat contentX = 0;
@@ -146,6 +195,7 @@
         CGFloat contentW = EPScreenWidth;
         CGFloat contentH = self.heightPicker;
         _contentView = [[UIView alloc]initWithFrame:CGRectMake(contentX, contentY, contentW, contentH)];
+        [_contentView addBorderColor:[UIColor clearColor]];
         [_contentView setBackgroundColor:[UIColor whiteColor]];
         _contentView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
     }
@@ -191,67 +241,75 @@
     return _selctedBottomlineView;
 }
 
-- (UITableView *)tableViewFirst{
-    if (!_tableViewFirst) {
-        CGFloat tableW = EPScreenWidth / 3 * 2;
-        CGFloat tableH = self.contentView.ep_height - self.lineView.ep_bottom;
-        CGFloat tableX = 0;
-        CGFloat tableY = self.lineView.ep_bottom;
-        _tableViewFirst = [[UITableView alloc] initWithFrame:CGRectMake(tableX, tableY, tableW, tableH)];
-        _tableViewFirst.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        _tableViewFirst.backgroundColor = [UIColor blueColor];
-        _tableViewFirst.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, self.heightUnit * 2)];
-        [_tableViewFirst setSeparatorStyle:UITableViewCellSeparatorStyleNone];
+- (PGPickerView *)pickerViewFirst
+{
+    if (!_pickerViewFirst) {
+        CGFloat pickerW = (EPScreenWidth - 2 * self.heightUnit) / 3 * 2;
+        CGFloat pickerH = self.contentView.ep_height - self.lineView.ep_bottom;
+        CGFloat pickerX = 0;
+        CGFloat pickerY = self.lineView.ep_bottom;
+        _pickerViewFirst = [[PGPickerView alloc]initWithFrame:CGRectMake(pickerX, pickerY, pickerW, pickerH)];
+        _pickerViewFirst.lineHeight = 0;
+        _pickerViewFirst.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     }
-    return _tableViewFirst;
+    return _pickerViewFirst;
 }
 
-- (UITableView *)tableViewSecond{
-    if (!_tableViewSecond) {
-        CGFloat tableW = EPScreenWidth / 3  / 2;
-        CGFloat tableH = self.contentView.ep_height - self.lineView.ep_bottom;
-        CGFloat tableX = self.tableViewFirst.ep_right;
-        CGFloat tableY = self.lineView.ep_bottom;
-        _tableViewSecond = [[UITableView alloc] initWithFrame:CGRectMake(tableX, tableY, tableW, tableH)];
-        _tableViewSecond.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        _tableViewSecond.backgroundColor = [UIColor redColor];
-        _tableViewSecond.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, self.heightUnit * 2)];
-        [_tableViewSecond setSeparatorStyle:UITableViewCellSeparatorStyleNone];
-
+- (PGPickerView *)pickerViewSecond
+{
+    if (!_pickerViewSecond) {
+        CGFloat pickerW = (EPScreenWidth - 2 * self.heightUnit) / 3  / 2;
+        CGFloat pickerH = self.contentView.ep_height - self.lineView.ep_bottom;
+        CGFloat pickerX = self.pickerViewFirst.ep_right;
+        CGFloat pickerY = self.lineView.ep_bottom;
+        _pickerViewSecond = [[PGPickerView alloc]initWithFrame:CGRectMake(pickerX, pickerY, pickerW, pickerH)];
+        _pickerViewSecond.lineHeight = 0;
+        _pickerViewSecond.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     }
-    return _tableViewSecond;
+    return _pickerViewSecond;
 }
 
-- (UITableView *)tableViewThird{
-    if (!_tableViewThird) {
-        CGFloat tableW = EPScreenWidth / 3 / 2;
-        CGFloat tableH = self.contentView.ep_height - self.lineView.ep_bottom;
-        CGFloat tableX = self.tableViewSecond.ep_right;
-        CGFloat tableY = self.lineView.ep_bottom;
-        _tableViewThird = [[UITableView alloc] initWithFrame:CGRectMake(tableX, tableY, tableW, tableH)];
-        _tableViewThird.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        _tableViewThird.backgroundColor = [UIColor yellowColor];
-        _tableViewThird.tableHeaderView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 0, self.heightUnit * 2)];
-        [_tableViewThird setSeparatorStyle:UITableViewCellSeparatorStyleNone];
-
+- (PGPickerView *)pickerViewThird
+{
+    if (!_pickerViewThird) {
+        CGFloat pickerW = (EPScreenWidth - 2 * self.heightUnit) / 3 / 2;
+        CGFloat pickerH = self.contentView.ep_height - self.lineView.ep_bottom;
+        CGFloat pickerX = self.secondUnit.ep_right;
+        CGFloat pickerY = self.lineView.ep_bottom;
+        _pickerViewThird = [[PGPickerView alloc]initWithFrame:CGRectMake(pickerX, pickerY, pickerW, pickerH)];
+        _pickerViewThird.lineHeight = 0;
+        _pickerViewThird.autoresizingMask = UIViewAutoresizingFlexibleWidth;
     }
-    return _tableViewThird;
+    return _pickerViewThird;
 }
 
+-(UILabel *)secondUnit {
+    if (!_secondUnit) {
+        CGFloat labelW = self.heightUnit;
+        CGFloat labelH = self.heightUnit;
+        CGFloat labelX = self.pickerViewSecond.ep_right;
+        CGFloat labelY = self.lineView.ep_bottom + self.heightUnit * 2;
+        _secondUnit = [[UILabel alloc] initWithFrame:CGRectMake(labelX, labelY, labelW, labelH)];
+        _secondUnit.textAlignment = NSTextAlignmentCenter;
+        _secondUnit.font = [UIFont systemFontOfSize:18];
+        _secondUnit.textColor = [UIColor blackColor];
+    }
+    return _secondUnit;
+}
 
-//- (UIPickerView *)pickerView
-//{
-//    if (!_pickerView) {
-//        CGFloat pickerW = self.contentView.st_width;
-//        CGFloat pickerH = self.contentView.st_height - self.lineView.st_bottom;
-//        CGFloat pickerX = 0;
-//        CGFloat pickerY = self.lineView.st_bottom;
-//        _pickerView = [[UIPickerView alloc]initWithFrame:CGRectMake(pickerX, pickerY, pickerW, pickerH)];
-//        [_pickerView setBackgroundColor:[UIColor whiteColor]];
-//        _pickerView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-//    }
-//    return _pickerView;
-//}
+-(UILabel *)thirdUnit {
+    if (!_thirdUnit) {
+        CGFloat labelW = self.heightUnit;
+        CGFloat labelH = self.heightUnit;
+        CGFloat labelX = self.pickerViewThird.ep_right;
+        CGFloat labelY = self.lineView.ep_bottom + self.heightUnit * 2;
+        _thirdUnit = [[UILabel alloc] initWithFrame:CGRectMake(labelX, labelY, labelW, labelH)];
+        _thirdUnit.textAlignment = NSTextAlignmentCenter;
+        _thirdUnit.font = [UIFont systemFontOfSize:18];
+        _thirdUnit.textColor = [UIColor blackColor];
+    }
+    return _thirdUnit;
+}
 
 - (UIButton *)buttonLeft{
     if (!_buttonLeft) {
@@ -261,8 +319,8 @@
         CGFloat leftY = (self.lineView.ep_top - leftH) / 2;
         _buttonLeft = [[UIButton alloc]initWithFrame:CGRectMake(leftX, leftY, leftW, leftH)];
         [_buttonLeft setTitle:@"取消" forState:UIControlStateNormal];
-        [_buttonLeft setTitleColor:[UIColor lightGrayColor] forState:UIControlStateNormal];
-        [_buttonLeft addBorderColor:self.borderButtonColor];
+        [_buttonLeft setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+//        [_buttonLeft addBorderColor:self.borderButtonColor];
         [_buttonLeft.titleLabel setFont:self.font];
         [_buttonLeft addTarget:self action:@selector(selectedCancel) forControlEvents:UIControlEventTouchUpInside];
         _buttonLeft.autoresizingMask = UIViewAutoresizingFlexibleRightMargin;
@@ -278,8 +336,10 @@
         CGFloat rightY = self.buttonLeft.ep_y;
         _buttonRight = [[UIButton alloc]initWithFrame:CGRectMake(rightX, rightY, rightW, rightH)];
         [_buttonRight setTitle:@"确定" forState:UIControlStateNormal];
-        [_buttonRight setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        [_buttonRight addBorderColor:self.borderButtonColor];
+        [_buttonRight setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+        [_buttonRight setBackgroundColor:[UIColor blueColor]];
+        [_buttonRight addBorderColor:[UIColor blueColor]];
+
         [_buttonRight.titleLabel setFont:self.font];
         [_buttonRight addTarget:self action:@selector(selectedOk) forControlEvents:UIControlEventTouchUpInside];
         _buttonRight.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin;
@@ -306,7 +366,7 @@
 - (UIView *)lineViewDown{
     if (!_lineViewDown) {
         CGFloat lineX = 0;
-        CGFloat lineY = self.tableViewFirst.ep_bottom;
+        CGFloat lineY = self.pickerViewFirst.ep_bottom;
         CGFloat lineW = self.contentView.ep_width;
         CGFloat lineH = 0.5;
         _lineViewDown = [[UIView alloc]initWithFrame:CGRectMake(lineX, lineY, lineW, lineH)];

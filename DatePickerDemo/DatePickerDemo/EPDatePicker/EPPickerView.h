@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "EPPickerViewUI.h"
 #import "UIView+EPPicker.h"
+#import "PGPickerView/PGPickerView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -23,24 +24,26 @@ typedef NS_ENUM(NSInteger, STPickerContentMode) {
 @property (nonatomic, strong) UIView *contentView;
 /** 2.边线,选择器和上方tool之间的边线 */
 @property (nonatomic, strong)UIView *lineView;
-/** 2.边线,恒定于中间表示选中对象的上边线 */
+/** 3.边线,恒定于中间表示选中对象的上边线 */
 @property (nonatomic, strong)UIView *selectedToplineView;
-/** 2.边线,恒定于中间表示选中对象的下边线 */
+/** 4.边线,恒定于中间表示选中对象的下边线 */
 @property (nonatomic, strong)UIView *selctedBottomlineView;
 
-/** 3.选择器 */
-@property (nonatomic, strong)UITableView *tableViewFirst;
-@property (nonatomic, strong)UITableView *tableViewSecond;
-@property (nonatomic, strong)UITableView *tableViewThird;
-///** 3.选择器 */
-//@property (nonatomic, strong)UIPickerView *pickerView;
-/** 4.左边的按钮 */
+/** 5.选择器 */
+@property (nonatomic, strong)PGPickerView *pickerViewFirst;
+@property (nonatomic, strong)PGPickerView *pickerViewSecond;
+@property (nonatomic, strong)PGPickerView *pickerViewThird;
+/** 6.第二选择框单位 */
+@property (nonatomic, strong)UILabel *secondUnit;
+/** 7.第三选择框单位 */
+@property (nonatomic, strong)UILabel *thirdUnit;
+/** 8.左边的按钮 */
 @property (nonatomic, strong)UIButton *buttonLeft;
-/** 5.右边的按钮 */
+/** 9.右边的按钮 */
 @property (nonatomic, strong)UIButton *buttonRight;
-/** 6.标题label */
+/** 10.标题label */
 @property (nonatomic, strong)UILabel *labelTitle;
-/** 7.下边线,在显示模式是STPickerContentModeCenter的时候显示 */
+/** 11.下边线,在显示模式是STPickerContentModeCenter的时候显示 */
 @property (nonatomic, strong)UIView *lineViewDown;
 
 /** 1.标题，default is nil */
